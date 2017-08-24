@@ -1,23 +1,26 @@
 # SpeechToSpeech
 # Speech to Speech Browser Application
 
-  The application uses IBM's speech recognition, machine translation, and voice synthesis capabilities to instantly translate speech to another language and read the translation aloud.
+  このアプリケーションは、IBMの音声認識、機械翻訳、音声再生APIを使用して作成する、リアルタイムの音声翻訳アプリケーションです。
   
-Node.js is used to provide the browser client's authentication token.
+Node.jsはブラウザへクライアントの認証トークンを提供するために利用されます。
 
-Give it a try! Click the button below to fork into IBM DevOps Services and deploy your own copy of this application on Bluemix.
+下記のボタンをクリックして、すぐにIBM Cloudでこのアプリケーションを試してみましょう！
 
-[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/leonrch/SpeechToSpeech)
+[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/taijihagino/SpeechToSpeech)
 
 ## Getting Started
 
-1. Create a Bluemix Account
+1. IBM Cloud (Bluemix) のアカウントを作ります
 
-    [Sign up][sign_up] in Bluemix, or use an existing account. Watson Services in Beta are free to use.
+    IBM Cloudへ新たに[Sign up][sign_up] するか、既にお持ちのアカウントでログインしてください。Watsonサービスを無料で使い始めることができます。
+    
+2. DevOpsツールチェーンからWeb IDEを起動します
 
-2. Download and install the [Cloud-foundry CLI][cloud_foundry] tool
+3. `manifest.yml` ファイルを編集します
 
-3. Edit the `manifest.yml` file and change the `<application-name>` to something unique.
+    `<application-name>` を任意の一意な名称に変更します。
+
   ```none
 ---
 declared-services:
@@ -25,7 +28,7 @@ declared-services:
     label: speech_to_text
     plan: standard
   language-translation-service:
-    label: language_translation
+    label: language_translator
     plan: standard
   text-to-speech-service:
     label: text_to_speech
@@ -41,132 +44,56 @@ applications:
   - language-translation-service
   - text-to-speech-service
   ```
-  The name you use will determinate your application url initially, e.g. `<application-name>.mybluemix.net`.
 
-4. Install [Node.js](http://nodejs.org/)
+  ここで指定したアプリケーション名は、あなたが実際にIBM Cloudで公開するアプリケーションのURLの文字列になります。
+  例） `<application-name>.mybluemix.net`.
 
-5. Install project dependencies and build browser application:
-  ```sh
-  $ npm install
-  $ npm build
-  ```
+ここで一旦Pushします。
+ymlファイルで定義した内容でIBM Cloud上へアプリケーションがデプロイされます。
 
-6. Connect to Bluemix in the command line tool.
-  ```sh
-  $ cf api https://api.ng.bluemix.net
-  $ cf login -u <your user ID>
-  ```
+4. app.jsを修正します
 
-7. Create the following three services in Bluemix.
-  ```sh
-  $ cf create-service speech_to_text standard speech-to-text-service-standard
-  $ cf create-service text_to_speech standard text-to-speech-service
-  $ cf create-service language_translation standard language-translation-service
-  ```
-
-8. Push it live!
-  ```sh
-  $ cf push
-  ```
-See the full [Getting Started][getting_started] documentation for more details, including code snippets and references.
-
-## Running locally
-
-  The application uses [Node.js](http://nodejs.org/) and [npm](https://www.npmjs.com/) so you will have to download and install them as part of the steps below.
-
-1. Copy the credentials from your `speech-to-text-service-standard`, `language-translation-service`,
-   `text-to-speech-service` services in Bluemix to `app.js`, you can see the credentials using:
-
+    作成したSpeech to Text APIの資格情報からUserとPasswordを転記します。
     ```sh
-    $ cf env <application-name>
-    ```
-    Example output:
-    ```sh
-	System-Provided:
-	{
-	 "VCAP_SERVICES": {
-	  "language_translation": [
-	   {
-		"credentials": {
-		 "password": "lt-password",
-		 "url": "https://gateway.watsonplatform.net/language-translation/api",
-		 "username": "lt-username"
-		},
-		"label": "language_translation",
-		"name": "language-translation-service",
-		"plan": "standard",
-		"provider": null,
-		"syslog_drain_url": null,
-		"tags": [
-		 "watson",
-		 "ibm_created",
-		 "ibm_dedicated_public",
-		 "ibm_deprecated"
-		]
-	   }
-	  ],
-	  "speech_to_text": [
-	   {
-		"credentials": {
-		 "password": "stt-password",
-		 "url": "https://stream.watsonplatform.net/speech-to-text/api",
-		 "username": "stt-username"
-		},
-		"label": "speech_to_text",
-		"name": "speech-to-text-service-standard",
-		"plan": "standard",
-		"provider": null,
-		"syslog_drain_url": null,
-		"tags": [
-		 "watson",
-		 "ibm_created",
-		 "ibm_dedicated_public"
-		]
-	   }
-	  ],
-	  "text_to_speech": [
-	   {
-		"credentials": {
-		 "password": "tts-password",
-		 "url": "https://stream.watsonplatform.net/text-to-speech/api",
-		 "username": "tts-username"
-		},
-		"label": "text_to_speech",
-		"name": "text-to-speech-service",
-		"plan": "standard",
-		"provider": null,
-		"syslog_drain_url": null,
-		"tags": [
-		 "watson",
-		 "ibm_created",
-		 "ibm_dedicated_public"
-		]
-	   }
-	  ]
-	 }
-	}
-    ```
-    You need to copy `lt-username`, `lt-password`, `stt-username`, `stt-password`, `tts-username` and `tts-password`.
-
-2. Install [Node.js](http://nodejs.org/)
-
-3. To install project dependencies, go to the project folder in a terminal and run:
-    ```sh
-    $ npm install
+    // For local development, put username and password in config
+    // or store in your environment
+    var config = {
+        version: 'v1',
+        url: 'https://stream.watsonplatform.net/speech-to-text/api',
+        username: '**<Your User Name>**',
+        password: '**<Your Password>**'
+    };
     ```
 
-4. Then, build the browser application:
-
+    同様に、Language Translator APIの資格情報とText to Speech APIの資格情報も転記します。
     ```sh
-    $ npm build
+    // ------------------------------- MT ---------------------------------
+    app.use(bodyParser.urlencoded({ extended: false }));
+
+    var mt_credentials = extend({
+        url: 'https://gateway.watsonplatform.net/language-translator/api',
+        username: '**<Your User Name>**',
+        password: '**<Your Password>**',
+        version: 'v2'
+    }, bluemix.getServiceCreds('language-translation')); // VCAP_SERVICES
+
     ```
 
-5. Start the application:
     ```sh
-    $ node app.js
+    // -------------------------------- TTS ---------------------------------
+    var tts_credentials = extend({
+        url: 'https://stream.watsonplatform.net/text-to-speech/api',
+        version: 'v1',
+        username: '**<Your User Name>**',
+        password: '**<Your Password>**',
+    }, bluemix.getServiceCreds('text_to_speech'));
+
     ```
 
-6. Go to: [http://localhost:3000](http://localhost:3000)
+
+5. アプリケーションを起動します
+
+
 
 ## Troubleshooting
 
