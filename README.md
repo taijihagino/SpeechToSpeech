@@ -15,11 +15,19 @@ Node.jsはブラウザへクライアントの認証トークンを提供する�
 
     IBM Cloudへ新たに[Sign up][sign_up] するか、既にお持ちのアカウントでログインしてください。Watsonサービスを無料で使い始めることができます。
     
-2. DevOpsツールチェーンからWeb IDEを起動します
+2. IBM Cloudにこのアプリケーションをデプロイします
 
-3. `manifest.yml` ファイルを編集します
+    上記のボタンからBluemixへ遷移した場合、必要なサービスの組み合わせでページが開きます。
+    アプリケーション名を指定して、右下のデプロイボタンを押すとアプリケーションデプロイに必要な構成が生成されます。
 
-    `<application-name>` を任意の一意な名称に変更します。
+3. DevOpsツールチェーンからWeb IDEを起動します
+
+    前の手順から、ツールチェーンの画面になると思うので、「CODE」からWeb IDEを開きます。
+
+4. `manifest.yml` ファイルを確認します
+
+    `<application-name>` はここでは無視して頂いて結構です。
+    ３つのWatson APIの定義が記述されています。こちらの内容で、あなたのスペースへサービスが作成されます。
 
   ```none
 ---
@@ -45,13 +53,11 @@ applications:
   - text-to-speech-service
   ```
 
-  ここで指定したアプリケーション名は、あなたが実際にIBM Cloudで公開するアプリケーションのURLの文字列になります。
-  例） `<application-name>.mybluemix.net`.
-
 ここで一旦Pushします。
-ymlファイルで定義した内容でIBM Cloud上へアプリケーションがデプロイされます。
+IBM Cloudのダッシュボードを開くと、上記の３つのサービスが作成されていることが確認できると思います。
+それぞれの資格情報を作成し、内容を控えておいてください。
 
-4. app.jsを修正します
+5. app.jsを修正します
 
     作成したSpeech to Text APIの資格情報からUserとPasswordを転記します。
     ```sh
@@ -60,8 +66,8 @@ ymlファイルで定義した内容でIBM Cloud上へアプリケーション�
     var config = {
         version: 'v1',
         url: 'https://stream.watsonplatform.net/speech-to-text/api',
-        username: '**<Your User Name>**',
-        password: '**<Your Password>**'
+        username: '<Your User Name>',
+        password: '<Your Password>'
     };
     ```
 
@@ -72,8 +78,8 @@ ymlファイルで定義した内容でIBM Cloud上へアプリケーション�
 
     var mt_credentials = extend({
         url: 'https://gateway.watsonplatform.net/language-translator/api',
-        username: '**<Your User Name>**',
-        password: '**<Your Password>**',
+        username: '<Your User Name>',
+        password: '<Your Password>',
         version: 'v2'
     }, bluemix.getServiceCreds('language-translation')); // VCAP_SERVICES
 
@@ -84,8 +90,8 @@ ymlファイルで定義した内容でIBM Cloud上へアプリケーション�
     var tts_credentials = extend({
         url: 'https://stream.watsonplatform.net/text-to-speech/api',
         version: 'v1',
-        username: '**<Your User Name>**',
-        password: '**<Your Password>**',
+        username: '<Your User Name>',
+        password: '<Your Password>',
     }, bluemix.getServiceCreds('text_to_speech'));
 
     ```
@@ -95,15 +101,16 @@ ymlファイルで定義した内容でIBM Cloud上へアプリケーション�
 
 
 
-## Troubleshooting
+## トラブルシューティング
 
-To troubleshoot your Bluemix app the main useful source of information are the logs, to see them, run:
+IBM Cloud上のアプリケーションで問題が発生した時はログを確認してください。
+下記のコマンドを実行します。
 
   ```sh
   $ cf logs <application-name> --recent
   ```
 
-## License
+## ライセンス
 
   This sample code is licensed under Apache 2.0. Full license text is available in [LICENSE](LICENSE).
 
