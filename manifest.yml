@@ -1,14 +1,14 @@
 ---
 declared-services:
-  speech-to-text-service-standard:
+  speech-to-text-service-lite:
     label: speech_to_text
-    plan: standard
-  language-translation-service:
+    plan: lite
+  language-translation-service-lite:
     label: language_translator
-    plan: standard
-  text-to-speech-service:
+    plan: lite
+  text-to-speech-service-lite:
     label: text_to_speech
-    plan: standard	
+    plan: lite	
 applications:
 - name: SpeechToSpeech
   command: node app.js
@@ -16,8 +16,8 @@ applications:
   path: .
   memory: 256m
   services:
-  - speech-to-text-service-standard
-  - language-translation-service
-  - text-to-speech-service
+  - speech-to-text-service-lite
+  - language-translation-service-lite
+  - text-to-speech-service-lite
   
   
